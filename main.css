@@ -1,8 +1,12 @@
 * {
     box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
 }
-
+html{
+    scroll-behavior: smooth;
+}
 body {
     margin: 0;
     min-height: 100vh;
@@ -11,6 +15,31 @@ body {
     justify-content: center;
     align-items: center;
     color: #fff;
+    overflow-x: hidden;
+}
+header{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 150px;
+    
+    padding-top: 20px;
+}
+header ul li a{
+    text-decoration: none;
+    color: white;
+    font-size: 20px;
+}
+header ul li a:hover{
+    text-decoration: underline;
+}
+header ul{
+    list-style-type: none;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    gap: 100px;
 }
 .container{
     display: flex;

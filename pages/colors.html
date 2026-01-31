@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Цветовое поле</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #111;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+        }
+        .wrapper { width: 95%; max-width: 1200px; }
+        h1 { text-align: center; font-weight: 400; margin-bottom: 15px; }
+
+        button {
+            display: block;
+            margin: 0 auto 15px;
+            padding: 8px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            background: #ff6b81;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        button:hover { background: #ff4a66; }
+
+        .board {
+            display: grid;
+            grid-template-columns: 40px repeat(24, 1fr);
+            gap: 4px;
+        }
+        .label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            opacity: 0.7;
+            user-select: none;
+        }
+        .tile {
+            aspect-ratio: 1 / 1;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+        }
+        .tile:hover { transform: scale(1.05); box-shadow: 0 0 0 2px rgba(255,255,255,0.35); }
+        .tile.selected { outline: 3px solid white; transform: scale(1.08); }
+        .hint { margin-top: 18px; text-align: center; opacity: 0.7; font-size: 14px; }
+
+        @media (max-width: 900px) {
+            .board { grid-template-columns: 30px repeat(16, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <h1>Выбери цвет</h1>
+    <button id="randomBtn">🎲 Случайный цвет</button>
+    <div class="board" id="board"></div>
+    <div class="hint">Координаты — как в морском бое 🎯</div>
+</div>
+
+<script>
+const board = document.getElementById('board');
+const rows = 16; // вертикально
+const cols = 24; // горизонтально
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+let selectedTile = null;
+
+// храним все тайлы в массив для удобного выбора
+const tiles = [];
+
+// ── верхняя строка цифр
+board.appendChild(document.createElement('div')); // пустой угол
+for (let x = 0; x < cols; x++) {
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = x + 1;
+    board.appendChild(label);
+}
+
+// ── основная сетка
+for (let y = 0; y < rows; y++) {
+    // буквы слева
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = letters[y];
+    board.appendChild(label);
+
+    for (let x = 0; x < cols; x++) {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+
+        // ===== плавные переходы =====
+        const hue = Math.round((x / (cols - 1)) * 360);
+        const saturation = 65 + Math.random() * 10;
+        const lightness = 25 + (y / (rows - 1)) * 50;
+
+        tile.style.backgroundColor = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+
+        tile.dataset.coord = letters[y] + (x + 1); // сохраняем координату
+        tile.dataset.row = y;
+        tile.dataset.col = x;
+
+        tile.addEventListener('click', () => {
+            selectTile(tile);
+        });
+
+        board.appendChild(tile);
+        tiles.push(tile);
+    }
+}
+
+// функция выбора тайла
+function selectTile(tile) {
+    if (selectedTile) selectedTile.classList.remove('selected');
+    tile.classList.add('selected');
+    selectedTile = tile;
+}
+
+// кнопка случайного цвета
+document.getElementById('randomBtn').addEventListener('click', () => {
+    const randomIndex = Math.floor(Math.random() * tiles.length);
+    const randomTile = tiles[randomIndex];
+    selectTile(randomTile);
+});
+</script>
+
+</body>
+</html>
